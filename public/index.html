@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="navbar.css"> <!-- External CSS for navbar -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <h1 class="logo">ZEXXA</h1>
+            <ul class="nav-links">
+                <li><a href="#">Home</a></li>
+                <li><a href="/about">About</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Upload a File</h1>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <input type="file" name="myFile" required>
+            <label for="expiration">Expire after:</label>
+            <select name="expiration" id="expiration" required>
+                <option value="3600">1 hour</option>
+                <option value="86400">1 day</option>
+                <option value="604800">1 week</option>
+                <option value="2592000">1 month</option>
+            </select>
+            <label for="password">Set a Password (optional):</label>
+            <input type="password" name="password" id="password">
+            <button type="submit">Upload</button>
+            <div class="loader" id="loader"></div>
+            <div id="uploadStatus"></div>
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 ZEXXA. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+            const loader = document.getElementById('loader');
+
+            // Display the loader
+            loader.style.display = 'block';
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text())
+            .then(text => {
+                const uploadStatus = document.getElementById('uploadStatus');
+                uploadStatus.innerHTML = text;
+                loader.style.display = 'none'; // Hide loader after upload
+                this.reset();
+            })
+            .catch(error => console.error('Error uploading file:', error));
+        });
+    </script>
+</body>
+</html>
